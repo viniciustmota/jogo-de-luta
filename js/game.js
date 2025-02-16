@@ -8,24 +8,31 @@ const canvaHeight = 576
 canvas.width = canvasWidth
 canvas.height = canvaHeight
 
+const desiredFPS = 120
+const fremeTime = 1000 / desiredFPS
+
 let prevTime = 0
+let lag = 0
 
 animate()
 
 function animate() {
-    window.requestAnimationFrame(animate)
+    const currentTime = performance.now()
+    const elapsed = currentTime - prevTime
+    prevTime = currentTime
+    lag += elapsed
 
     handleControls()
 
-    ctx.fillStyle = "black"
-    ctx.fillRect(0,0,canvasWidth,canvaHeight)
+    while (lag >= fremeTime){
+        ctx.fillStyle = "black"
+        ctx.fillRect(0,0,canvasWidth,canvaHeight)
 
-    player.update()
-    //player2.update()
+        background.update()
+        player.update()
 
-    let delta = (performance.now() - prevTime) / 1000
-    let fps = 1 / delta
-
-    prevTime = performance.now()
-    //console.log(`FPS: ${fps}`)
+        lag -= fremeTime
+    }
+ 
+    window.requestAnimationFrame(animate)
 }
